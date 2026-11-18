@@ -1,0 +1,72 @@
+name: price-monitor
+
+permissions:
+  contents: write
+
+on:
+  # GitHub 自带定时已实测命中率仅 ~13%（2026-11-18 应触发 15 次、实际 2 次），
+  # 停用，改由外部定时器 cron-job.org 调用 workflow_dispatch 触发。
+  # 需要兜底时把下面两行取消注释即可。
+  # schedule:
+  #   - cron: "17 23,0-16 * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "loop=循环监控(默认) / single=只查一次"
+        type: choice
+        options:
+          - loop
+          - single
+        default: loop
+  push:
+    branches: [main]
+    paths-ignore:
+      - "state.json"
+      - "README.md"
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    # GitHub 单个 job 硬上限 360 分钟；loop 跑 350 分钟，留 10 分钟给
+    # checkout + 依赖安装，避免到点被强杀。
+    timeout-minutes: 360
+    env:
+      LOOP_MINUTES: "350"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # push 走单次检查（改完 config 能立刻验证），dispatch 默认走长循环
+      - name: Resolve mode
+        id: mode
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            mode=single
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            mode="${{ inputs.mode }}"
+          else
+            mode=loop
+          fi
+          [ -z "$mode" ] && mode=loop
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "resolved: mode=$mode loop_minutes=$LOOP_MINUTES"
+
+      # 外部定时器触发：连续监控 350 分钟、每分钟检测一次
+      - name: Run monitor loop
+        if: steps.mode.outputs.mode != 'single'
+        run: python monitor.py --loop-minutes "$LOOP_MINUTES"
+
+      - name: Run single check
+        if: steps.mode.outputs.mode == 'single'
+        run: python monitor.py --once
