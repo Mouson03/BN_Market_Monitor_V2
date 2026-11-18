@@ -29,9 +29,9 @@ jobs:
     runs-on: ubuntu-latest
     # GitHub 单个 job 硬上限 360 分钟；loop 跑 350 分钟，留 10 分钟给
     # checkout + 依赖安装，避免到点被强杀。
-    timeout-minutes: 360
+    timeout-minutes: 182
     env:
-      LOOP_MINUTES: "350"
+      LOOP_MINUTES: "180"
     steps:
       - uses: actions/checkout@v4
 
