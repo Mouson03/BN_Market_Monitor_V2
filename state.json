@@ -1,1 +1,6 @@
-{}
+{
+  "SMHBUSDT:price_below:460": {
+    "alerted": true,
+    "last_alert_date": "2026-11-19"
+  }
+}
