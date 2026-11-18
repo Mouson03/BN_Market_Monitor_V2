@@ -27,8 +27,9 @@ on:
 jobs:
   monitor:
     runs-on: ubuntu-latest
-    # GitHub 单个 job 硬上限 360 分钟；loop 跑 350 分钟，留 10 分钟给
-    # checkout + 依赖安装，避免到点被强杀。
+    # GitHub 单个 job 硬上限 360 分钟；每 3 小时一场、跑 180 分钟，首尾无缝。
+    # timeout 给 182，多出的 2 分钟容纳 checkout + 收尾提交，不是场次空档。
+
     timeout-minutes: 182
     env:
       LOOP_MINUTES: "180"
