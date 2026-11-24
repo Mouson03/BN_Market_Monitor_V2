@@ -5,7 +5,7 @@ pushplus_token: "b4fd77993f9f4a0aa19976ee1fb17d20"
 rules:
   - symbol: SMHBUSDT        # 币安交易对（API 写法，无斜杠）
     alert_type: price_below # price_below=价格低于时提醒 / price_above=价格高于时提醒
-    threshold: 450          # 触发阈值
+    threshold: 430          # 触发阈值
     frequency: daily        # once=仅提醒一次 / daily=每日最多提醒一次
 
   - symbol: SMHBUSDT        # 币安交易对（API 写法，无斜杠）
@@ -15,7 +15,7 @@ rules:
 
   - symbol: SMHBUSDT        # 币安交易对（API 写法，无斜杠）
     alert_type: price_below # price_below=价格低于时提醒 / price_above=价格高于时提醒
-    threshold: 410          # 触发阈值
+    threshold: 420          # 触发阈值
     frequency: daily        # once=仅提醒一次 / daily=每日最多提醒一次
 
   - symbol: SMHBUSDT        # 币安交易对（API 写法，无斜杠）
