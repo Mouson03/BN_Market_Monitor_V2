@@ -10,5 +10,9 @@
   "SMHBUSDT:price_below:412": {
     "alerted": true,
     "last_alert_date": "2026-11-23"
+  },
+  "SMHBUSDT:price_below:440": {
+    "alerted": true,
+    "last_alert_date": "2026-11-24"
   }
 }
